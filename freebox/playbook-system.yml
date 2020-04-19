@@ -24,11 +24,6 @@
         name: ssh
         state: restarted
 
-    - name: Install nfs-common packages
-      apt:
-        name: nfs-common
-        state: present
-
     - name: Downlad Docker install script
       get_url:
         url: https://get.docker.com/
