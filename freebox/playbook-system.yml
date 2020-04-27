@@ -13,6 +13,10 @@
     - name: Upgrade all apt packages
       apt: upgrade=dist force_apt_get=yes
 
+    - name: Set timezone to Europe/Paris
+      timezone:
+        name: Europe/Paris
+
     - name: Change PasswordAuthentication to no in sshd_config file
       lineinfile:
         path: /etc/ssh/sshd_config

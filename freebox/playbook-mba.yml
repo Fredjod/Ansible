@@ -1,0 +1,95 @@
+---
+
+- name: Install / update MBA app
+  hosts: HomeVM
+  remote_user: freebox
+
+  vars:
+    project_root_dir: /Users/frederic/git/My-Banking-Agent
+    mba_app_dir: /home/freebox/docker/prod/mba
+    mba_logs_dir: /mnt/mba/logs
+    mba_files_dir: /mnt/mba/files
+    owncloud_data_dir: /mnt/owncloud/data
+    install_archive: ./docker/prod/mba_3.10.tar.gz
+    install_properties: ./docker/prod/app.txt
+    install_auth: ./docker/prod/auth.pl
+    install_main: ./docker/prod/mba.sh
+
+  tasks:
+
+    - name: Add files_external_allow_create_new_local in config.php
+      become: true
+      lineinfile:
+        path: "{{ owncloud_data_dir }}/config/config.php"
+        regexp: "^\\s*'files_external_allow_create_new_local' => 'true',$"
+        insertbefore: '^\);$'
+        line: "  'files_external_allow_create_new_local' => 'true',"
+        state: present
+        owner: www-data
+        group: www-data
+
+    - name: Copy file with owner and permission, using symbolic representation
+      copy:
+        src: "{{ project_root_dir }}/docker"
+        dest: ./
+        owner: freebox
+        group: freebox
+
+    - name: build the mba:build image
+      command: docker build -t mba:build ./docker/build
+      register: output
+
+    - name: build the mba:prod image
+      command: docker build -t mba:prod ./docker/prod
+      register: output
+
+    - name: Create MBA app directory 
+      file:
+        path: "{{ mba_app_dir }}"
+        state: directory
+
+    - name: Create MBA logs directory 
+      file:
+        path: "{{ mba_app_dir }}"
+        state: directory
+
+    - name: Unarchive MBA source
+      command: "tar xzvf {{ install_archive }} -C {{ mba_app_dir }}"
+      register: output
+
+    - name: Copy file app.txt
+      copy: 
+        remote_src: yes
+        src: "{{ install_properties }}"
+        dest: "{{ mba_app_dir }}/properties"
+
+    - name: Copy file auth.pl
+      copy: 
+        remote_src: yes
+        src: "{{ install_auth }}"
+        dest: "{{ mba_app_dir }}"
+        mode: '0600'
+
+    - name: Copy file mba.sh
+      copy: 
+        remote_src: yes
+        src: "{{ install_main }}"
+        dest: "{{ mba_app_dir }}"
+
+    - name: Cleanup install directory
+      file:
+        path: "{{ install_auth }}"
+        state: absent
+
+    - name: Cleanup install directory
+      file:
+        path: "{{ install_properties }}"
+        state: absent
+
+    - name: Create MBA cron job
+      cron:
+        name: "MBA"
+        minute: "30"
+        hour: "20"
+        job: "docker run -it --rm -v {{ mba_app_dir }}:/usr/mba/app -v {{ mba_logs_dir }}:/usr/mba/logs -v {{ mba_files_dir }}:/usr/mba/files mba:prod"
+...
