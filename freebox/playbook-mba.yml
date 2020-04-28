@@ -91,5 +91,5 @@
         name: "MBA"
         minute: "30"
         hour: "20"
-        job: "docker run -it --rm -v {{ mba_app_dir }}:/usr/mba/app -v {{ mba_logs_dir }}:/usr/mba/logs -v {{ mba_files_dir }}:/usr/mba/files mba:prod"
+        job: "docker run --rm -v {{ mba_app_dir }}:/usr/mba/app -v {{ mba_logs_dir }}:/usr/mba/logs -v {{ mba_files_dir }}:/usr/mba/files mba:prod > /tmp/mba_output.log 2>&1" 
 ...

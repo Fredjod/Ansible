@@ -1,6 +1,7 @@
 0) Creer les répertoire de données
 	mkdir -p /Master/VMs/data/owncloud
 	mkdir -p /Master/VMs/data/mba
+	mkdir -p /Backup/FileHistory
 
 1) Create a VM from the Freeos console, with the following parameters:
 	- 2 CPU
@@ -13,6 +14,7 @@
 	mounts:
 	  - [ '//mafreebox.freebox.fr/Master/VMs/data/owncloud', '/mnt/owncloud', cifs, 'vers=1.0,guest,uid=33,gid=33', '0', '0' ]
 	  - [ '//mafreebox.freebox.fr/Master/VMs/data/mba', '/mnt/mba', cifs, 'vers=1.0,guest,uid=1000,gid=1000', '0', '0' ]
+	  - [ '//mafreebox.freebox.fr/Backup', '/mnt/Backup', cifs, 'vers=1.0,guest,uid=1000,gid=1000', '0', '0' ]
 
 #cloud-config
 ssh_authorized_keys:
@@ -26,6 +28,7 @@ packages:
 mounts:
   - [ '//mafreebox.freebox.fr/Master/VMs/data/owncloud', '/mnt/owncloud', cifs, 'vers=1.0,guest,uid=33,gid=33', '0', '0' ]
   - [ '//mafreebox.freebox.fr/Master/VMs/data/mba', '/mnt/mba', cifs, 'vers=1.0,guest,uid=1000,gid=1000', '0', '0' ]
+  - [ '//mafreebox.freebox.fr/Backup', '/mnt/Backup', cifs, 'vers=1.0,guest,uid=1000,gid=1000', '0', '0' ]
 runcmd:
   - mount -a
 
@@ -43,3 +46,4 @@ runcmd:
 	$ ansible-playbook -i hosts playbook-system.yml
 	$ ansible-playbook -i hosts playbook-owncloud.yml
 	$ ansible-playbook -i hosts playbook-mba.yml
+	$ ansible-playbook -i hosts playbook-mynas.yml (need to mount Vault2 volume before executing)

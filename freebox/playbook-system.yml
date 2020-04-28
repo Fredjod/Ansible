@@ -28,6 +28,11 @@
         name: ssh
         state: restarted
 
+    - name: Install rsync packages
+      apt:
+        name: rsync
+        state: present
+
     - name: Downlad Docker install script
       get_url:
         url: https://get.docker.com/
