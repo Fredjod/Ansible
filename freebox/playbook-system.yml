@@ -17,49 +17,46 @@
       timezone:
         name: Europe/Paris
 
-    - name: Change PasswordAuthentication to no in sshd_config file
+    # setup ssh server with public key, remove text password authentication
+
+    - name: Update authorized public key 
+      authorized_key: 
+        user: pi 
+        key: "{{ lookup('file', '/Volumes/Vault2/ssh-keys/pi.password/pi.raspberrypi.pub') }}" 
+        state: present
+
+    - name: Swith PasswordAuthentication to 'no' in sshd_config
       lineinfile:
         path: /etc/ssh/sshd_config
         regexp: '^#PasswordAuthentication'
         line: PasswordAuthentication no
-        
+
     - name: Restart ssh service
       service:
         name: ssh
         state: restarted
+
+    # Install required packages
 
     - name: Install rsync packages
       apt:
         name: rsync
         state: present
 
-    - name: Downlad Docker install script
-      get_url:
-        url: https://get.docker.com/
-        dest: ./get-docker.sh
-    
-    - name: Run Docker install script
-      command: sh ./get-docker.sh           
-      
-    - name: Add freebox user to docker usersgroup
-      command: usermod -aG docker freebox
+    - name: Install cifs-utils packages
+      apt:
+        name: cifs-utils
+        state: present
 
-    - name: Delete get-docker.sh file
-      file:
-        path: ./get-docker.sh
-        state: absent
-       
-    - name: Install docker-compose
-      get_url:
-        url: https://github.com/AppTower/docker-compose/releases/download/1.25.4/run.sh
-        dest: /usr/local/bin/docker-compose
-        
-    - name: Change compose script permission
-      file:
-        path: /usr/local/bin/docker-compose
-        owner: freebox
-        group: freebox
-        mode: 0755
+    # Setup the mount point
+
+    - name: Mount Backup volume
+      mount:
+        path: /mnt/Backup
+        src: '//mafreebox.freebox.fr/Backup'
+        fstype: cifs
+        opts: 'vers=1.0,guest,uid=1000,gid=1000'
+        state: present
         
     - name: Check if a reboot is needed for Debian box
       register: reboot_required_file

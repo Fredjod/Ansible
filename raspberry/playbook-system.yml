@@ -1,0 +1,136 @@
+---
+
+- name: Setup or update the VM
+  hosts: raspberry
+  remote_user: pi
+  become: yes
+    
+  tasks:
+  
+    # all packages update
+
+    - name: Update apt-get repo and cache
+      apt: update_cache=yes force_apt_get=yes cache_valid_time=3600
+
+    - name: Upgrade all apt packages
+      apt: upgrade=dist force_apt_get=yes
+
+    # Install required packages
+
+    - name: Install rsync packages
+      apt:
+        name: rsync
+        state: present
+
+    - name: Install cifs-utils packages
+      apt:
+        name: cifs-utils
+        state: present
+
+    # set timezone
+
+    - name: Set timezone to Europe/Paris
+      timezone:
+        name: Europe/Paris
+
+    # setup ssh server with public key, remove text password authentication
+
+    - name: Update authorized public key 
+      authorized_key: 
+        user: pi 
+        key: "{{ lookup('file', '/Volumes/Vault2/ssh-keys/pi.password/pi.raspberrypi.pub') }}" 
+        state: present
+
+    - name: Swith PasswordAuthentication to 'no' in sshd_config
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^#PasswordAuthentication'
+        line: PasswordAuthentication no
+
+    - name: Restart ssh service
+      service:
+        name: ssh
+        state: restarted
+
+    # Add swap space
+
+    - name: Turn the swap off
+      command: dphys-swapfile swapoff
+      register: output
+
+    - name: Change swap config
+      lineinfile:
+        path: /etc/dphys-swapfile
+        regexp: '^CONF_SWAPSIZE='
+        line: CONF_SWAPSIZE=2048
+
+    - name: Turn the swap on
+      command: dphys-swapfile swapon
+      register: output
+
+    # Setup the mount point
+
+    - name: Mount owncloud volume
+      mount:
+        path: /mnt/owncloud
+        src: '//mafreebox.freebox.fr/Master/VMs/data/owncloud'
+        fstype: cifs
+        opts: 'vers=1.0,guest,uid=33,gid=33'
+        state: present
+
+    - name: Mount mba volume
+      mount:
+        path: /mnt/mba
+        src: '//mafreebox.freebox.fr/Master/VMs/data/mba'
+        fstype: cifs
+        opts: 'vers=1.0,guest,uid=33,gid=33'
+        state: present
+
+
+    # Install docker packages
+
+    - name: Downlad Docker install script
+      get_url:
+        url: https://get.docker.com/
+        dest: ./get-docker.sh
+    
+    - name: Run Docker install script
+      command: sh ./get-docker.sh           
+      
+    - name: Add pi user to docker usersgroup
+      command: usermod -aG docker pi
+
+    - name: Delete get-docker.sh file
+      file:
+        path: ./get-docker.sh
+        state: absent
+       
+    - name: Install docker-compose
+      get_url:
+        url: https://github.com/AppTower/docker-compose/releases/download/1.25.4/run.sh
+        dest: /usr/local/bin/docker-compose
+        
+    - name: Change compose script permission
+      file:
+        path: /usr/local/bin/docker-compose
+        owner: pi
+        group: pi
+        mode: 0755
+
+    # Reboot if necessary
+        
+    - name: Check if a reboot is needed for Debian box
+      register: reboot_required_file
+      stat: path=/var/run/reboot-required get_md5=no
+      
+ 
+    - name: Reboot the Debian server if needed
+      reboot:
+        msg: "Reboot initiated by Ansible due to kernel updates"
+        connect_timeout: 5
+        reboot_timeout: 300
+        pre_reboot_delay: 0
+        post_reboot_delay: 30
+        test_command: uptime
+      when: reboot_required_file.stat.exists
+...

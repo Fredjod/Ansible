@@ -1,20 +1,18 @@
 ---
 
 - name: Install / update Owncloud server
-  hosts: HomeVM
-  remote_user: freebox
+  hosts: raspberry
+  remote_user: pi
   vars:
-    project_root_dir: /Users/frederic/git/My-Banking-Agent
+    docker_root_dir: ./owncloud-server
     owncloud_data_dir: /mnt/owncloud/data
     mariadb_backup_dir: /mnt/owncloud/db_backup
 
   tasks:
     - name: Copy file with owner and permission, using symbolic representation
       copy:
-        src: "{{ project_root_dir }}/docker"
+        src: "{{ docker_root_dir }}"
         dest: ./
-        owner: freebox
-        group: freebox
 
     - name: Create directories for external db_backup volume
       become: true
@@ -36,11 +34,11 @@
       command: docker-compose -p owncloud-server stop
       register: output
       args:
-        chdir: ./docker/owncloud-server
+        chdir: ./owncloud-server
 
     - name: Create and start Owncloud services stack
       command: docker-compose -p owncloud-server up -d
       register: output
       args:
-        chdir: ./docker/owncloud-server
+        chdir: ./owncloud-server
 ...

@@ -1,12 +1,12 @@
 ---
 
 - name: Install / update MBA app
-  hosts: HomeVM
-  remote_user: freebox
+  hosts: raspberry
+  remote_user: pi
 
   vars:
     project_root_dir: /Users/frederic/git/My-Banking-Agent
-    mba_app_dir: /home/freebox/docker/prod/mba
+    mba_app_dir: /home/pi/docker/prod/mba
     mba_logs_dir: /mnt/mba/logs
     mba_files_dir: /mnt/mba/files
     owncloud_data_dir: /mnt/owncloud/data
@@ -29,11 +29,12 @@
         group: www-data
 
     - name: Copy file with owner and permission, using symbolic representation
+      become: true
       copy:
         src: "{{ project_root_dir }}/docker"
         dest: ./
-        owner: freebox
-        group: freebox
+        owner: www-data
+        group: www-data
 
     - name: build the mba:build image
       command: docker build -t mba:build ./docker/build
@@ -44,52 +45,74 @@
       register: output
 
     - name: Create MBA app directory 
+      become: true
       file:
         path: "{{ mba_app_dir }}"
         state: directory
+        owner: www-data
+        group: www-data
 
     - name: Create MBA logs directory 
+      become: true
       file:
-        path: "{{ mba_app_dir }}"
+        path: "{{ mba_logs_dir }}"
         state: directory
+        owner: www-data
+        group: www-data
 
     - name: Unarchive MBA source
+      become: true
       command: "tar xzvf {{ install_archive }} -C {{ mba_app_dir }}"
       register: output
+      owner: www-data
+      group: www-data
 
     - name: Copy file app.txt
+      become: true
       copy: 
         remote_src: yes
         src: "{{ install_properties }}"
         dest: "{{ mba_app_dir }}/properties"
+        owner: www-data
+        group: www-data
 
     - name: Copy file auth.pl
+      become: true
       copy: 
         remote_src: yes
         src: "{{ install_auth }}"
         dest: "{{ mba_app_dir }}"
         mode: '0600'
+        owner: www-data
+        group: www-data
 
     - name: Copy file mba.sh
+      become: true
       copy: 
         remote_src: yes
         src: "{{ install_main }}"
         dest: "{{ mba_app_dir }}"
+        owner: www-data
+        group: www-data
 
     - name: Cleanup install directory
+      become: true
       file:
         path: "{{ install_auth }}"
         state: absent
 
     - name: Cleanup install directory
+      become: true
       file:
         path: "{{ install_properties }}"
         state: absent
 
     - name: Create MBA cron job
+      become: true
       cron:
         name: "MBA"
         minute: "30"
         hour: "20"
-        job: "docker run --rm -v {{ mba_app_dir }}:/usr/mba/app -v {{ mba_logs_dir }}:/usr/mba/logs -v {{ mba_files_dir }}:/usr/mba/files mba:prod > /tmp/mba_output.log 2>&1" 
+        job: "docker run --rm -v {{ mba_app_dir }}:/usr/mba/app -v {{ mba_logs_dir }}:/usr/mba/logs -v {{ mba_files_dir }}:/usr/mba/files mba:prod > /tmp/mba_output.log 2>&1"
+        user: www-data
 ...
