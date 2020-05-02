@@ -1,6 +1,7 @@
 0) Creer les répertoire de données
 	mkdir -p /Master/VMs/data/owncloud
 	mkdir -p /Master/VMs/data/mba
+	mkdir -p /Master/VMs/data/logs
 	mkdir -p /Backup/FileHistory
 
 1) Create a boot disk for raspberry on SD Card

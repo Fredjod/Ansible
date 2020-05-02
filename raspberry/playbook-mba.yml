@@ -9,8 +9,6 @@
     project_root_dir: /Users/home/git/My-Banking-Agent/mba_app
     install_archive: mba_3.10.tar.gz
     mba_app_dir: /home/pi/mba_app
-    mba_logs_dir: /mnt/mba/logs
-    mba_files_dir: /mnt/mba/files
     owncloud_data_dir: /mnt/owncloud/data
     install_properties: /Volumes/Vault2/mba/app.txt
     install_auth: /Volumes/Vault2/mba/auth.pl
@@ -45,13 +43,6 @@
     - name: Create MBA app directory 
       file:
         path: "{{ mba_app_dir }}/prod/app"
-        state: directory
-        owner: www-data
-        group: www-data
-
-    - name: Create MBA logs directory 
-      file:
-        path: "{{ mba_logs_dir }}"
         state: directory
         owner: www-data
         group: www-data
