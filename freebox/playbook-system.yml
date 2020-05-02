@@ -21,7 +21,7 @@
 
     - name: Update authorized public key 
       authorized_key: 
-        user: pi 
+        user: freebox 
         key: "{{ lookup('file', '/Volumes/Vault2/ssh-keys/pi.password/pi.raspberrypi.pub') }}" 
         state: present
 

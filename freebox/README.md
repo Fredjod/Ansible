@@ -4,8 +4,8 @@
 	mkdir -p /Backup/FileHistory
 
 1) Create a VM from the Freeos console, with the following parameters:
-	- 2 CPU
-	- Mem: maximum
+	- 1 CPU
+	- Mem: 500Mb
 	- user: freebox
 	- password: freebox
 	- Distro: Debian
@@ -20,9 +20,10 @@
 
 3) Update the hosts file with the VM's IP
 
-4) Run the Ansible script
+4) Mount Vault2 volume
+
+5) Run the Ansible script
 
 	$ ansible-playbook -i hosts --ask-pass playbook-system.yml (--ask-pass is required for the first run)
-	$ ansible-playbook -i hosts playbook-owncloud.yml
-	$ ansible-playbook -i hosts playbook-mba.yml
-	$ ansible-playbook -i hosts playbook-mynas.yml (need to mount Vault2 volume before executing)
+	Then reboot the VM.
+	$ ansible-playbook -i hosts playbook-mynas.yml
