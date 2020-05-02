@@ -9,7 +9,7 @@ volumes:
 # The docker logs command will show you the output a container is generating when you don't run it interactively.
 # $ docker logs --tail 50 --follow --timestamps owncloud-server_owncloud_1
 # $ docker-compose exec owncloud ls -al /var/www/owncloud
-# $ docker exec -it owncloud-server_owncloud_1 bin/bash
+# $ docker exec -it owncloud-server_owncloud_1 bash
 # https://github.com/owncloud-docker/base
 
 

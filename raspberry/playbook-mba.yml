@@ -3,22 +3,21 @@
 - name: Install / update MBA app
   hosts: raspberry
   remote_user: pi
+  become: true
 
   vars:
-    project_root_dir: /Users/frederic/git/My-Banking-Agent
-    mba_app_dir: /home/pi/docker/prod/mba
+    project_root_dir: /Users/home/git/My-Banking-Agent/mba_app
+    install_archive: mba_3.10.tar.gz
+    mba_app_dir: /home/pi/mba_app
     mba_logs_dir: /mnt/mba/logs
     mba_files_dir: /mnt/mba/files
     owncloud_data_dir: /mnt/owncloud/data
-    install_archive: ./docker/prod/mba_3.10.tar.gz
-    install_properties: ./docker/prod/app.txt
-    install_auth: ./docker/prod/auth.pl
-    install_main: ./docker/prod/mba.sh
+    install_properties: /Volumes/Vault2/mba/app.txt
+    install_auth: /Volumes/Vault2/mba/auth.pl
 
   tasks:
 
     - name: Add files_external_allow_create_new_local in config.php
-      become: true
       lineinfile:
         path: "{{ owncloud_data_dir }}/config/config.php"
         regexp: "^\\s*'files_external_allow_create_new_local' => 'true',$"
@@ -29,31 +28,28 @@
         group: www-data
 
     - name: Copy file with owner and permission, using symbolic representation
-      become: true
       copy:
-        src: "{{ project_root_dir }}/docker"
+        src: "{{ project_root_dir }}"
         dest: ./
         owner: www-data
         group: www-data
 
     - name: build the mba:build image
-      command: docker build -t mba:build ./docker/build
+      command: docker build -t mba:build ./mba_app/build
       register: output
 
     - name: build the mba:prod image
-      command: docker build -t mba:prod ./docker/prod
+      command: docker build -t mba:prod ./mba_app/prod
       register: output
 
     - name: Create MBA app directory 
-      become: true
       file:
-        path: "{{ mba_app_dir }}"
+        path: "{{ mba_app_dir }}/prod/app"
         state: directory
         owner: www-data
         group: www-data
 
     - name: Create MBA logs directory 
-      become: true
       file:
         path: "{{ mba_logs_dir }}"
         state: directory
@@ -61,58 +57,44 @@
         group: www-data
 
     - name: Unarchive MBA source
-      become: true
-      command: "tar xzvf {{ install_archive }} -C {{ mba_app_dir }}"
+      command: "tar xzvf {{ mba_app_dir }}/prod/{{ install_archive }} -C {{ mba_app_dir }}/prod/app"
       register: output
-      owner: www-data
-      group: www-data
+
+    - name: Recursively change ownership of a directory
+      file:
+        path: "{{ mba_app_dir }}/prod/app"
+        state: directory
+        recurse: yes
+        owner: www-data
+        group: www-data
 
     - name: Copy file app.txt
-      become: true
       copy: 
-        remote_src: yes
         src: "{{ install_properties }}"
-        dest: "{{ mba_app_dir }}/properties"
+        dest: "{{ mba_app_dir }}/prod/app/properties"
         owner: www-data
         group: www-data
 
     - name: Copy file auth.pl
-      become: true
       copy: 
-        remote_src: yes
         src: "{{ install_auth }}"
-        dest: "{{ mba_app_dir }}"
+        dest: "{{ mba_app_dir }}/prod/app"
         mode: '0600'
         owner: www-data
         group: www-data
 
-    - name: Copy file mba.sh
-      become: true
-      copy: 
-        remote_src: yes
-        src: "{{ install_main }}"
-        dest: "{{ mba_app_dir }}"
+    - name: Set mba_run.sh to executable
+      file: 
+        path: "{{ mba_app_dir }}/run_mba.sh"
+        mode: '0755'
         owner: www-data
         group: www-data
 
-    - name: Cleanup install directory
-      become: true
-      file:
-        path: "{{ install_auth }}"
-        state: absent
-
-    - name: Cleanup install directory
-      become: true
-      file:
-        path: "{{ install_properties }}"
-        state: absent
-
     - name: Create MBA cron job
-      become: true
       cron:
+        user: pi
         name: "MBA"
         minute: "30"
         hour: "20"
-        job: "docker run --rm -v {{ mba_app_dir }}:/usr/mba/app -v {{ mba_logs_dir }}:/usr/mba/logs -v {{ mba_files_dir }}:/usr/mba/files mba:prod > /tmp/mba_output.log 2>&1"
-        user: www-data
+        job: "{{ mba_app_dir }}/run_mba.sh > /tmp/mba_output.log 2>&1"
 ...
