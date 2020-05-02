@@ -57,6 +57,14 @@
         fstype: cifs
         opts: 'vers=1.0,guest,uid=1000,gid=1000'
         state: present
+
+    - name: Mount logs volume
+      mount:
+        path: /mnt/logs
+        src: '//mafreebox.freebox.fr/Master/VMs/data/logs'
+        fstype: cifs
+        opts: 'vers=1.0,guest,uid=1000,gid=1000'
+        state: present
         
     - name: Check if a reboot is needed for Debian box
       register: reboot_required_file
