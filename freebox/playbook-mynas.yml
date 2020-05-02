@@ -9,6 +9,7 @@
     private_key_file: /Volumes/Vault2/ssh-keys/pi.wo.password/pi.raspberry
     mynas_app_dir: /home/freebox/MyNas
     install_archive: MyNAS_0.4.tar.gz
+    backup_plan_file: /Volumes/Vault2/mynas/backup_volume_path.py
 
   tasks:
 
@@ -36,24 +37,32 @@
       command: "tar xzvf {{ mynas_app_dir }}/{{ install_archive }} -C {{ mynas_app_dir }}"
       register: output
 
-    - name: Create MyNAS cron job chrisal-mauguio backup
-      cron:
-        name: "chrisal-mauguio backup"
-        minute: "0"
-        hour: "1"
-        job: "{{ mynas_app_dir }}/BackupMain.py -v chrisal-mauguio" 
+    - name: Copy backup plan
+      copy:
+        src: "{{ backup_plan_file }}"
+        dest: "{{ mynas_app_dir }}"
+        owner: freebox
+        group: freebox
+        mode: '0600'
+
+#    - name: Create MyNAS cron job chrisal-mauguio backup
+#      cron:
+#        name: "chrisal-mauguio backup"
+#        minute: "0"
+#        hour: "1"
+#        job: "{{ mynas_app_dir }}/BackupMain.py -v chrisal-mauguio" 
 
     - name: Create MyNAS cron job ornano-mauguio backup
       cron:
         name: "ornano-mauguio backup"
         minute: "0"
-        hour: "2"
+        hour: "1"
         job: "{{ mynas_app_dir }}/BackupMain.py -v ornano-mauguio"
 
     - name: Create MyNAS cron job mauguio-chrisal backup
       cron:
         name: "mauguio-chrisal backup"
         minute: "0"
-        hour: "3"
+        hour: "2"
         job: "{{ mynas_app_dir }}/BackupMain.py -v mauguio-chrisal" 
 ...
