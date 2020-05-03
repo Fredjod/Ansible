@@ -5,9 +5,9 @@
 
 1) Create a VM from the Freeos console, with the following parameters:
 	- 1 CPU
-	- Mem: 500Mb
+	- Mem: 600Mb
 	- user: freebox
-	- password: freebox
+	- password: freebox (gona be changed with key authentification)
 	- Distro: Debian
 	- Size: 16G
 
@@ -22,8 +22,9 @@
 
 4) Mount Vault2 volume
 
-5) Run the Ansible script
+5) Run the Ansible scripts
 
 	$ ansible-playbook -i hosts --ask-pass playbook-system.yml (--ask-pass is required for the first run)
-	Then reboot the VM.
+	Then reboot the VM (the first time).
 	$ ansible-playbook -i hosts playbook-mynas.yml
+	$ ansible-playbook -i hosts playbook-logchecker.yml 

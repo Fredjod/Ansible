@@ -1,0 +1,19 @@
+version: "2.1"
+
+# $ docker logs --tail 50 --follow --timestamps minetest
+# $ docker exec -it minetest bash
+
+services:
+  minetest:
+    image: linuxserver/minetest
+    container_name: minetest
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Paris
+      - CLI_ARGS=${CMD_ARGS}
+    volumes:
+      - ${MNT_DIR}:/config/.minetest
+    ports:
+      - 2009:30000/udp
+    restart: unless-stopped

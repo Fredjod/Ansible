@@ -1,0 +1,27 @@
+---
+
+- name: Install / update Minetest server
+  hosts: raspberry
+  remote_user: pi
+  vars:
+    docker_root_dir: ./minetest
+    minetest_data_dir: /mnt/minetest
+
+  tasks:
+    - name: Copy docker-compose dir
+      copy:
+        src: "{{ docker_root_dir }}"
+        dest: ./
+
+    - name: Tear down existing minetest services stack
+      command: docker-compose -p minetest-server stop
+      register: output
+      args:
+        chdir: ./minetest
+
+    - name: Create and start minetest services stack
+      command: docker-compose -p minetest-server up -d
+      register: output
+      args:
+        chdir: ./minetest
+...

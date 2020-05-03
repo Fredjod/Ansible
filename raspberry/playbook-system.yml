@@ -94,6 +94,14 @@
         opts: 'vers=1.0,guest,uid=33,gid=33'
         state: present
 
+    - name: Mount Minetest volume
+      mount:
+        path: /mnt/minetest
+        src: '//mafreebox.freebox.fr/Master/minetest'
+        fstype: cifs
+        opts: 'vers=1.0,guest,uid=1000,gid=1000'
+        state: present
+
     # Install docker packages
 
     - name: Downlad Docker install script

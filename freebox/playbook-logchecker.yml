@@ -1,0 +1,41 @@
+---
+
+- name: Install / update LogChecker app
+  hosts: HomeVM
+  remote_user: freebox
+
+  vars:
+    project_root_dir: /Users/frederic/git/LogChecker
+    logchecker_app_dir: /home/freebox/LogChecker
+    log_checker_param: /Volumes/Vault2/logchecker/parameters.py
+
+  tasks:
+
+    - name: Create LogChecker app directory 
+      file:
+        path: "{{ logchecker_app_dir }}"
+        state: directory
+
+    - name: Copy LogChecker main program
+      copy:
+        src: "{{ project_root_dir }}/logchecker.py"
+        dest: "{{ logchecker_app_dir }}"
+        owner: freebox
+        group: freebox
+        mode: '0755'          
+
+    - name: Copy logchecker parameters
+      copy:
+        src: "{{ log_checker_param }}"
+        dest: "{{ logchecker_app_dir }}"
+        owner: freebox
+        group: freebox
+        mode: '0600'
+
+    - name: Create LogChecker cron job
+      cron:
+        name: "LogChecker"
+        minute: "0"
+        hour: "7"
+        job: "{{ logchecker_app_dir }}/logchecker.py /mnt/logs" 
+...
