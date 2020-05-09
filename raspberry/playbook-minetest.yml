@@ -17,11 +17,17 @@
       command: docker-compose -p minetest-server stop
       register: output
       args:
-        chdir: ./minetest
+        chdir: "{{ docker_root_dir }}"
+
+    - name: Copy minetest.conf file
+      copy:
+        src: "{{ docker_root_dir }}/minetest.conf"
+        dest: "{{ minetest_data_dir }}/main-config/"
+
 
     - name: Create and start minetest services stack
       command: docker-compose -p minetest-server up -d
       register: output
       args:
-        chdir: ./minetest
+        chdir: "{{ docker_root_dir }}"
 ...

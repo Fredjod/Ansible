@@ -3,12 +3,14 @@
 	mkdir -p /Master/VMs/data/mba
 	mkdir -p /Master/VMs/data/logs
 	mkdir -p /Backup/FileHistory
+	mkdir -p /Master/minetest
 
 1) Create a boot disk for raspberry on SD Card
 - download the raspbian distro (Lite): https://www.raspberrypi.org/downloads/raspbian/
 - unzip the image
 - run belenaEtcher for burning the image on the SD
 - add 'ssh' file in the boot partition
+
 	$ touch /Volumes/boot/ssh
 
 
@@ -25,10 +27,14 @@
 
 4) Mount Vault2 volume
 
-5) Run the Ansible script
+5) Redirect the 80, 443 ports of the Internet box to he raspberry. 80 is mandatory for gettting SSL certificat with certbot (LetsEncrypt)
+
+6) Run the Ansible script
 
 	$ ansible-playbook -i hosts --ask-pass playbook-system.yml (--ask-pass is required for the first run)
 	reboot the raspberry ( $ sudo shutdown -hr now )
 	$ ansible-playbook -i hosts playbook-owncloud.yml
+	$ ansible-playbook -i hosts playbook-reverse.yml
 	$ ansible-playbook -i hosts playbook-mba.yml
-	$ ansible-playbook -i hosts playbook-mynas.yml (need to mount Vault2 volume before executing)
+	$ ansible-playbook -i hosts playbook-minetest.yml
+

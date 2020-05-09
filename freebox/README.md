@@ -1,6 +1,7 @@
 0) Creer les répertoire de données
 	mkdir -p /Master/VMs/data/owncloud
 	mkdir -p /Master/VMs/data/mba
+	mkdir -p /Master/VMs/data/logs
 	mkdir -p /Backup/FileHistory
 
 1) Create a VM from the Freeos console, with the following parameters:
@@ -17,6 +18,8 @@
 	$ curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
 	$ python get-pip.py --user
 	$ pip install --user ansible
+	$ /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+	$ brew install https://raw.githubusercontent.com/kadwanev/bigboybrew/master/Library/Formula/sshpass.rb
 
 3) Update the hosts file with the VM's IP
 
