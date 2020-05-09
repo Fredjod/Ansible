@@ -1,0 +1,68 @@
+---
+
+- name: Install / update nginx reverse-rroxy server
+  hosts: raspberry
+  remote_user: pi
+  become: true
+  vars:
+    docker_root_dir: ./nginx
+    nginx_etc: /home/pi/nginx/etc
+    secure_storage: /Volumes/Vault2/nginx
+
+  tasks:
+
+    - name: Create tmp nginx container
+      command: docker container create --name tmp_n nginx
+      register: output
+
+    - name: Create directories for etc ngix volume
+      file:
+        path: "{{ nginx_etc }}"
+        state: directory
+
+    - name: Extract /etc/nginx directory content to host
+      command: "docker cp tmp_n:/etc/nginx {{ nginx_etc }}"
+      register: output
+
+    - name: Remove tmp nginx container
+      command: docker container rm tmp_n
+      register: output
+
+    - name: Copy docker-compose YAML file
+      copy:
+        src: "{{ docker_root_dir }}/docker-compose.yml"
+        dest: "{{ docker_root_dir }}/docker-compose.yml"
+
+    - name: Copy owncloud.conf file
+      copy:
+        src: "{{ secure_storage }}/owncloud.conf"
+        dest: "{{ nginx_etc }}/nginx/conf.d/"
+
+    - name: Copy init-letsencrypt.sh file
+      copy:
+        src: "{{ secure_storage }}/init-letsencrypt.sh"
+        dest: "{{ docker_root_dir }}"
+
+    - name: chmod init-letsencrypt.sh
+      file:
+        path: "{{ docker_root_dir }}/init-letsencrypt.sh"
+        mode: '0755'
+
+    - name: Stop nginx reverse-proxy service
+      command: docker-compose stop nginx
+      register: output
+      args:
+        chdir: "{{ docker_root_dir }}"
+
+    - name: Execute the SSL certificat genetation (init-letsencrypt.sh)
+      command: ./init-letsencrypt.sh
+      register: output
+      args:
+        chdir: "{{ docker_root_dir }}" 
+
+    - name: Restart nginx reverse-proxy service
+      command: docker-compose restart nginx
+      register: output
+      args:
+        chdir: "{{ docker_root_dir }}"
+...

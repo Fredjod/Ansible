@@ -1,0 +1,17 @@
+version: '3'
+services:
+  nginx:
+    image: nginx
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - /home/pi/nginx/etc/nginx:/etc/nginx
+      - /home/pi/nginx/etc/ssl/private:/etc/ssl/private
+      - /home/pi/nginx/certbot/conf:/etc/letsencrypt
+      - /home/pi/nginx/certbot/www:/var/www/certbot
+  certbot:
+    image: casperfrx/certbot
+    volumes:
+      - /home/pi/nginx/certbot/conf:/etc/letsencrypt
+      - /home/pi/nginx/certbot/www:/var/www/certbot

@@ -6,8 +6,8 @@
   become: true
 
   vars:
-    project_root_dir: /Users/home/git/My-Banking-Agent/mba_app
-    install_archive: mba_3.10.tar.gz
+    project_root_dir: /Users/frederic/git/My-Banking-Agent/mba_app
+    install_archive: mba_3.11.tar.gz
     mba_app_dir: /home/pi/mba_app
     owncloud_data_dir: /mnt/owncloud/data
     install_properties: /Volumes/Vault2/mba/app.txt
