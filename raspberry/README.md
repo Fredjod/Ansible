@@ -1,5 +1,6 @@
 0) Creer les répertoire de données
 	mkdir -p /Master/VMs/data/owncloud
+	mkdir -p /Master/share
 	mkdir -p /Master/VMs/data/mba
 	mkdir -p /Master/VMs/data/logs
 	mkdir -p /Backup/FileHistory

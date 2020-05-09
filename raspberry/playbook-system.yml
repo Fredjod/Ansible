@@ -78,6 +78,15 @@
         opts: 'vers=1.0,guest,uid=33,gid=33'
         state: present
 
+    - name: Mount share volume
+      mount:
+        path: /mnt/share
+        src: '//mafreebox.freebox.fr/Master/share'
+        fstype: cifs
+        opts: 'vers=1.0,guest,uid=33,gid=33'
+        state: present
+
+
     - name: Mount mba volume
       mount:
         path: /mnt/mba

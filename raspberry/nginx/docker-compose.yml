@@ -2,6 +2,7 @@ version: '3'
 services:
   nginx:
     image: nginx
+    restart: always
     ports:
       - 80:80
       - 443:443
@@ -13,6 +14,7 @@ services:
       - /home/pi/nginx/certbot/www:/var/www/certbot
   certbot:
     image: casperfrx/certbot
+    restart: always
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
     volumes:
       - /home/pi/nginx/certbot/conf:/etc/letsencrypt
