@@ -5,6 +5,7 @@ services:
     ports:
       - 80:80
       - 443:443
+    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
     volumes:
       - /home/pi/nginx/etc/nginx:/etc/nginx
       - /home/pi/nginx/etc/ssl/private:/etc/ssl/private
@@ -12,6 +13,7 @@ services:
       - /home/pi/nginx/certbot/www:/var/www/certbot
   certbot:
     image: casperfrx/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
     volumes:
       - /home/pi/nginx/certbot/conf:/etc/letsencrypt
       - /home/pi/nginx/certbot/www:/var/www/certbot
