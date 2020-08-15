@@ -45,15 +45,17 @@
         group: freebox
         mode: '0600'
 
-#    - name: Create MyNAS cron job chrisal-mauguio backup
-#      cron:
-#        name: "chrisal-mauguio backup"
-#        minute: "0"
-#        hour: "1"
-#        job: "{{ mynas_app_dir }}/BackupMain.py -v chrisal-mauguio" 
+    - name: Create MyNAS cron job chrisal-mauguio backup
+      cron:
+        state: present
+        name: "chrisal-mauguio backup"
+        minute: "0"
+        hour: "1"
+        job: "{{ mynas_app_dir }}/BackupMain.py -v chrisal-mauguio" 
 
     - name: Create MyNAS cron job ornano-mauguio backup
       cron:
+        state: present
         name: "ornano-mauguio backup"
         minute: "0"
         hour: "1"
@@ -61,6 +63,7 @@
 
     - name: Create MyNAS cron job mauguio-chrisal backup
       cron:
+        state: present
         name: "mauguio-chrisal backup"
         minute: "0"
         hour: "2"
