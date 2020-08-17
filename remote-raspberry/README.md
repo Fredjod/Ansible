@@ -18,17 +18,33 @@
 
 3) Mount Vault2 volume
 
-4) Update the hosts file with appropriate values
+4) Update the ansible hosts file with appropriate values
+	For getting the host USB drive UUID and name, connect to the raspberry (ssh with ID pi/raspberry), then run:
+   		$ sudo blkid
+
+   	The spindown time value, is the time in seconds divided by 5. Sample : 1h = 3600s => 720.
 
 5) Run the Ansible script
 
 	$ ansible-playbook -i hosts --ask-pass playbook.yml (--ask-pass is required for the first run)
 	May need to install sshpass :
 		$ brew install https://raw.githubusercontent.com/kadwanev/bigboybrew/master/Library/Formula/sshpass.rb
-	And need to connect once from a regular ssh command line (for initializing the fingerprints on your localhost)
-	reboot the raspberry ( $ sudo shutdown -hr now )
+	And may need to connect once from a regular ssh command line (for initializing the fingerprints on your localhost)
+
+	At the end of the first playbook execution, reboot the raspberry ( $ sudo shutdown -hr now )
 
 	Then the command line is always :
 	$ ansible-playbook -i hosts playbook.yml
 
+6) Hdparm checking (for USB disk management )
 
+   	For making sure the drive supports hdparm standby command (replace sdx by the your drive's name), run:
+    	$ sudo hdparm -y /dev/sdx
+    	If OK, the output should be :
+    		> /dev/sdx:
+    		>   issuing standby command
+    
+    For making sure the drive supports write cache
+    	$ sudo hdparm -I /dev/sdx | grep 'Write cache'
+    	If you see an asterix, it's OK
+    		> *    Write cache

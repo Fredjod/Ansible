@@ -84,7 +84,7 @@
         src: '//mafreebox.freebox.fr/Master/share'
         fstype: cifs
         opts: 'vers=1.0,guest,uid=33,gid=33'
-        state: present
+        state: absent
 
 
     - name: Mount mba volume

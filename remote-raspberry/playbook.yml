@@ -25,14 +25,6 @@
         regexp: '^127.0.1.1'
         line: 127.0.1.1   {{ host_name }}
 
-    # all packages update
-
-    - name: Update apt-get repo and cache
-      apt: update_cache=yes force_apt_get=yes cache_valid_time=3600
-
-    - name: Upgrade all apt packages
-      apt: upgrade=dist force_apt_get=yes
-
     # setup ssh server with public key, remove text password authentication
 
     - name: Update authorized public key 
@@ -51,6 +43,14 @@
       service:
         name: ssh
         state: restarted
+
+    # all packages update
+
+    - name: Update apt-get repo and cache
+      apt: update_cache=yes force_apt_get=yes cache_valid_time=3600
+
+    - name: Upgrade all apt packages
+      apt: upgrade=dist force_apt_get=yes
 
     # Install required packages
 
@@ -84,25 +84,21 @@
     - name: Mount up device by UUID
       mount:
         path: /mnt/backup
-        src: "UUID={{ host_drive_uuid }}"
+        src: "UUID={{ host_usb_hd_uuid }}"
         fstype: ntfs
         opts: rw,defaults
         state: present
 
-    # Drive standby setup
-
-    - name: spinning down of the hard drive
-      command: hdparm -B127 /dev/sda
-      register: output
+    # Drive spindown when idle
 
     - name: Add configuration to /etc/hdparm.conf
       blockinfile:
         path: /etc/hdparm.conf
-        marker: "# {mark} Sleep after 1h"
+        marker: "# {mark} Spindown when idle"
         block: |
-          /dev/sda {
-            write_cache = on
-            spindown_time = 720
+          {{ host_usb_drive_name }} {
+            write_cache = {{ host_usb_drive_write_cache }}
+            spindown_time = {{ host_usb_drive_spindown_time }}
           }
 
     # Samba setup
@@ -126,6 +122,16 @@
     - name: restart nmbd
       command: nmbd restart
       register: output
+
+    # Copy bash scripts (utlities)
+    - copy:
+        src: "{{ item }}"
+        dest: "./"
+        owner: pi
+        mode: '0700'
+      with_items:
+        - "reboot.sh"
+        - "shutdown.sh"
 
     # Reboot if necessary
         
