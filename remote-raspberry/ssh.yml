@@ -1,0 +1,27 @@
+---
+
+- name: Setup or update all remote raspberries
+  hosts: remote_raspberries
+  remote_user: pi
+  become: yes
+
+  tasks:
+
+    # setup ssh server with public key, remove text password authentication
+
+    - name: Update authorized public key 
+      authorized_key: 
+        user: pi 
+        key: "{{ lookup('file', '/Volumes/Vault2/ssh-keys/pi.wo.password/pi.raspberry.pub') }}" 
+        state: present
+
+    - name: Swith PasswordAuthentication to 'no' in sshd_config
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^#PasswordAuthentication'
+        line: PasswordAuthentication no
+
+    - name: Restart ssh service
+      service:
+        name: ssh
+        state: restarted
