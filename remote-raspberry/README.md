@@ -28,7 +28,7 @@
 
 5) Run the Ansible script
 
-	$ ansible-playbook -i hosts --ask-pass ssh.yml (--ask-pass is required for the first run)
+	$ ansible-playbook -i ansible-playbook -i /Volumes/Vault2/ansible/remote-rasp-hosts --ask-pass ssh.yml (--ask-pass is required for the first run)
 	May need to install sshpass :
 		$ brew install https://raw.githubusercontent.com/kadwanev/bigboybrew/master/Library/Formula/sshpass.rb
 	And may need to connect once from a regular ssh command line (for initializing the fingerprints on your localhost)
@@ -36,7 +36,7 @@
 	At the end of the first playbook execution, reboot the raspberry ( $ sudo shutdown -hr now )
 
 	Then the command line is :
-	$ ansible-playbook -i hosts playbook.yml
+	$ ansible-playbook -i ansible-playbook -i /Volumes/Vault2/ansible/remote-rasp-hosts playbook.yml
 
 6) Hdparm checking (for USB disk management )
 
