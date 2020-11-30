@@ -7,11 +7,12 @@
 
   vars:
     project_root_dir: /Users/frederic/git/My-Banking-Agent/mba_app
-    install_archive: mba_3.12.tar.gz
+    install_archive: mba_3.2.tar.gz
     mba_app_dir: /home/pi/mba_app
     owncloud_data_dir: /mnt/owncloud/data
     install_properties: /Volumes/Vault2/mba/app.txt
     install_auth: /Volumes/Vault2/mba/auth.pl
+    install_correlation: /Volumes/Vault2/mba/correlation.txt
 
   tasks:
 
@@ -62,6 +63,13 @@
     - name: Copy file app.txt
       copy: 
         src: "{{ install_properties }}"
+        dest: "{{ mba_app_dir }}/prod/app/properties"
+        owner: www-data
+        group: www-data
+
+    - name: Copy file correlation.txt
+      copy: 
+        src: "{{ install_correlation }}"
         dest: "{{ mba_app_dir }}/prod/app/properties"
         owner: www-data
         group: www-data
