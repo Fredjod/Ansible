@@ -58,6 +58,14 @@
         opts: 'vers=1.0,guest,uid=1000,gid=1000'
         state: present
 
+    - name: Mount Freebox volume
+      mount:
+        path: /mnt/Freebox
+        src: '//mafreebox.freebox.fr/Freebox'
+        fstype: cifs
+        opts: 'vers=1.0,guest,uid=1000,gid=1000'
+        state: present
+
     - name: Mount Master volume
       mount:
         path: /mnt/Master
