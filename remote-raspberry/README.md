@@ -36,7 +36,7 @@
 	At the end of the first playbook execution, reboot the raspberry ( $ sudo shutdown -hr now )
 
 	Then the command line is :
-	$ ansible-playbook -i ansible-playbook -i /Volumes/Vault2/ansible/remote-rasp-hosts playbook.yml
+	$ ansible-playbook -i /Volumes/Vault2/ansible/remote-rasp-hosts playbook.yml
 
 6) Hdparm checking (for USB disk management )
 
