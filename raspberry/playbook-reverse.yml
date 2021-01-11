@@ -1,6 +1,6 @@
 ---
 
-- name: Install / update nginx reverse-rroxy server
+- name: Install / update nginx reverse-proxy server
   hosts: raspberry
   remote_user: pi
   become: true
@@ -8,6 +8,7 @@
     docker_root_dir: ./nginx
     nginx_etc: /home/pi/nginx/etc
     secure_storage: /Volumes/Vault2/nginx
+    max_body_size: 500M # Set the maximum file size allowed for uploading.
 
   tasks:
 
@@ -37,6 +38,14 @@
       copy:
         src: "{{ secure_storage }}/owncloud.conf"
         dest: "{{ nginx_etc }}/nginx/conf.d/"
+
+    - name: Add client_max_body_size into nginx.conf file
+      lineinfile:
+        path: "{{ nginx_etc }}/nginx/nginx.conf"
+        regexp: "^\\s*client_max_body_size {{ max_body_size }};$"
+        insertbefore: "^\\s*keepalive_timeout"
+        line: "    client_max_body_size {{ max_body_size }};"
+        state: present
 
     - name: Copy init-letsencrypt.sh file
       copy:
