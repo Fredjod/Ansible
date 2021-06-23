@@ -106,7 +106,7 @@
     - name: Mount Minetest volume
       mount:
         path: /mnt/minetest
-        src: '//mafreebox.freebox.fr/Master/minetest'
+        src: '//mafreebox.freebox.fr/Master/VMs/data/minetest'
         fstype: cifs
         opts: 'vers=1.0,guest,uid=1000,gid=1000'
         state: present
