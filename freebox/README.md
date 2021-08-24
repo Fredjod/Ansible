@@ -31,3 +31,10 @@
 	Then reboot the VM (the first time).
 	$ ansible-playbook -i hosts playbook-mynas.yml
 	$ ansible-playbook -i hosts playbook-logchecker.yml 
+
+
+6) Restore command line sample:
+
+	Connect on the Freeos VM,
+	Create a restore folder in the Backup volume, and then execute :
+	$ scp -Cpr -i .ssh/pi.xxxxx pi@chrisal.xxxx.xx:/mnt/backup/xxxx.backup/VMs/data/owncloud/data/config /mnt/Backup/restore

@@ -18,7 +18,7 @@ volumes:
 # docker exec -it owncloud-server_db_1 bash
 #   cd /var/lib/backup/backup.1/
 #   gunzip  owncloud.sql.gz 
-#   mysql -h localhost -u owncloud owncloud < owncloud.sql (password: owncloud)
+#   mysql -h localhost -u owncloud -p owncloud < owncloud.sql (password: owncloud)
 #   exit
 # Playbook mba
 # docker exec -it owncloud-server_owncloud_1 bash
