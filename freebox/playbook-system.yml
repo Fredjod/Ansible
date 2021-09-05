@@ -4,7 +4,11 @@
   hosts: HomeVM
   remote_user: freebox
   become: yes
-    
+ 
+  vars:
+    win_credentials: /Volumes/Vault2/cifs/win-credentials
+    credentials_dest: /root/.win-credentials
+
   tasks:
   
     - name: Update apt-get repo and cache
@@ -50,6 +54,15 @@
 
     # Setup the mount point
 
+    - name: Copy file Windows credentials of the Freebox SMB services
+      copy: 
+        src: "{{ win_credentials }}"
+        dest: "{{ credentials_dest }}"
+        mode: '0600'
+        owner: root
+        group: root
+
+
     - name: Mount Backup volume
       mount:
         path: /mnt/Backup
@@ -63,7 +76,7 @@
         path: /mnt/Freebox
         src: '//mafreebox.freebox.fr/Freebox'
         fstype: cifs
-        opts: 'vers=1.0,guest,uid=1000,gid=1000'
+        opts: "credentials={{ credentials_dest }},uid=1000,gid=1000"
         state: present
 
     - name: Mount Master volume
@@ -71,7 +84,7 @@
         path: /mnt/Master
         src: '//mafreebox.freebox.fr/Master'
         fstype: cifs
-        opts: 'vers=1.0,guest,uid=1000,gid=1000'
+        opts: "credentials={{ credentials_dest }},uid=1000,gid=1000"
         state: present
 
     - name: Mount logs volume
@@ -79,7 +92,7 @@
         path: /mnt/logs
         src: '//mafreebox.freebox.fr/Master/VMs/data/logs'
         fstype: cifs
-        opts: 'vers=1.0,guest,uid=1000,gid=1000'
+        opts: "credentials={{ credentials_dest }},uid=1000,gid=1000"
         state: present
         
     - name: Check if a reboot is needed for Debian box

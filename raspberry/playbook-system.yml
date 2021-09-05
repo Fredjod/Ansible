@@ -4,7 +4,11 @@
   hosts: raspberry
   remote_user: pi
   become: yes
-    
+  
+  vars:
+    win_credentials: /Volumes/Vault2/cifs/win-credentials
+    credentials_dest: /root/.win-credentials
+
   tasks:
   
     # all packages update
@@ -70,12 +74,20 @@
 
     # Setup the mount point
 
+    - name: Copy file Windows credentials of the Freebox SMB services
+      copy: 
+        src: "{{ win_credentials }}"
+        dest: "{{ credentials_dest }}"
+        mode: '0600'
+        owner: root
+        group: root
+
     - name: Mount owncloud volume
       mount:
         path: /mnt/owncloud
         src: '//mafreebox.freebox.fr/Master/VMs/data/owncloud'
         fstype: cifs
-        opts: 'vers=1.0,guest,uid=33,gid=33'
+        opts: "credentials={{ credentials_dest }},uid=33,gid=33,file_mode=0770,dir_mode=0770"
         state: present
 
     - name: Mount share volume
@@ -83,7 +95,7 @@
         path: /mnt/share
         src: '//mafreebox.freebox.fr/Master/share'
         fstype: cifs
-        opts: 'vers=1.0,guest,uid=33,gid=33'
+        opts: "credentials={{ credentials_dest }},uid=33,gid=33"
         state: absent
 
 
@@ -92,7 +104,7 @@
         path: /mnt/mba
         src: '//mafreebox.freebox.fr/Master/VMs/data/mba'
         fstype: cifs
-        opts: 'vers=1.0,guest,uid=33,gid=33'
+        opts: "credentials={{ credentials_dest }},uid=33,gid=33"
         state: present
 
     - name: Mount logs volume
@@ -100,7 +112,7 @@
         path: /mnt/logs
         src: '//mafreebox.freebox.fr/Master/VMs/data/logs'
         fstype: cifs
-        opts: 'vers=1.0,guest,uid=33,gid=33'
+        opts: "credentials={{ credentials_dest }},uid=33,gid=33"
         state: present
 
     - name: Mount Minetest volume
@@ -108,8 +120,8 @@
         path: /mnt/minetest
         src: '//mafreebox.freebox.fr/Master/VMs/data/minetest'
         fstype: cifs
-        opts: 'vers=1.0,guest,uid=1000,gid=1000'
-        state: present
+        opts: "credentials={{ credentials_dest }},uid=1000,gid=1000"
+        state: absent
 
     # Install docker packages
 
