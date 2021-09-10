@@ -68,7 +68,7 @@
         path: /mnt/Backup
         src: '//mafreebox.freebox.fr/Backup'
         fstype: cifs
-        opts: 'vers=1.0,guest,uid=1000,gid=1000'
+        opts: "credentials={{ credentials_dest }},uid=1000,gid=1000"
         state: present
 
     - name: Mount Freebox volume
