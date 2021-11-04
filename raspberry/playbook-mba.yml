@@ -7,12 +7,14 @@
 
   vars:
     project_root_dir: /Users/frederic/git/My-Banking-Agent/mba_app
-    install_archive: mba_3.3.tar.gz
+    install_archive: mba_4.0.tar.gz
     mba_app_dir: /home/pi/mba_app
     owncloud_data_dir: /mnt/owncloud/data
     install_properties: /Volumes/Vault2/mba/app.txt
     install_auth: /Volumes/Vault2/mba/auth.pl
     install_correlation: /Volumes/Vault2/mba/correlation.txt
+    web_report_project: /Users/frederic/git/My-Banking-Agent//web-report/public-html/mba-report/
+    web_report_prod: /mnt/mba/web-report/
 
   tasks:
 
@@ -88,6 +90,13 @@
         mode: '0755'
         owner: www-data
         group: www-data
+
+    - name: Copy web-report source files
+      synchronize:
+          src: "{{ web_report_project }}"
+          dest: "{{ web_report_prod }}"
+          rsync_opts:
+            - "--exclude=*.json"
 
     - name: Create MBA cron job
       cron:

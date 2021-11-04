@@ -12,6 +12,7 @@ services:
       - /home/pi/nginx/etc/ssl/private:/etc/ssl/private
       - /home/pi/nginx/certbot/conf:/etc/letsencrypt
       - /home/pi/nginx/certbot/www:/var/www/certbot
+      - /mnt/mba/web-report:/var/www/web-report
   certbot:
     image: casperfrx/certbot
     restart: always
