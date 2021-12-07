@@ -68,7 +68,7 @@
         path: /mnt/Backup
         src: '//mafreebox.freebox.fr/Backup'
         fstype: cifs
-        opts: "credentials={{ credentials_dest }},uid=1000,gid=1000"
+        opts: "credentials={{ credentials_dest }},uid=1000,gid=1000,vers=3.1.1"
         state: present
 
     - name: Mount Freebox volume
@@ -76,7 +76,7 @@
         path: /mnt/Freebox
         src: '//mafreebox.freebox.fr/Freebox'
         fstype: cifs
-        opts: "credentials={{ credentials_dest }},uid=1000,gid=1000"
+        opts: "credentials={{ credentials_dest }},uid=1000,gid=1000,vers=3.1.1"
         state: present
 
     - name: Mount Master volume
@@ -84,7 +84,7 @@
         path: /mnt/Master
         src: '//mafreebox.freebox.fr/Master'
         fstype: cifs
-        opts: "credentials={{ credentials_dest }},uid=1000,gid=1000"
+        opts: "credentials={{ credentials_dest }},uid=1000,gid=1000,vers=3.1.1"
         state: present
 
     - name: Mount logs volume
@@ -92,7 +92,7 @@
         path: /mnt/logs
         src: '//mafreebox.freebox.fr/Master/VMs/data/logs'
         fstype: cifs
-        opts: "credentials={{ credentials_dest }},uid=1000,gid=1000"
+        opts: "credentials={{ credentials_dest }},uid=1000,gid=1000,vers=3.1.1"
         state: present
         
     - name: Check if a reboot is needed for Debian box

@@ -35,7 +35,7 @@
     - name: Create LogChecker cron job
       cron:
         name: "LogChecker"
-        minute: "0"
+        minute: "30"
         hour: "7"
         job: "{{ logchecker_app_dir }}/logchecker.py /mnt/logs" 
 ...
