@@ -8,6 +8,10 @@
   vars:
     win_credentials: /Volumes/Vault2/cifs/win-credentials
     credentials_dest: /root/.win-credentials
+    vpn_chantal_credentials: /Volumes/Vault2/cifs/vpn_chantat_credentials
+    vpn_chantal_credentials_dest: /root/.vpn_chantat_credentials
+    oepnvpn_config: /Volumes/Vault2/openvpn/config_openvpn_routed_orn79vpn_tcp.ovpn
+    oepnvpn_config_dest: /etc/openvpn/client/config_openvpn_routed_orn79vpn.ovpn
 
   tasks:
   
@@ -52,6 +56,16 @@
         name: cifs-utils
         state: present
 
+    - name: Install openvpn packages
+      apt:
+        name: openvpn
+        state: present
+
+    - name: Install killall packages
+      apt:
+        name: psmisc
+        state: present
+
     # Setup the mount point
 
     - name: Copy file Windows credentials of the Freebox SMB services
@@ -62,11 +76,27 @@
         owner: root
         group: root
 
+    - name: Copy file VPN credentials of the Chantal Freebox
+      copy: 
+        src: "{{ vpn_chantal_credentials }}"
+        dest: "{{ vpn_chantal_credentials_dest }}"
+        mode: '0600'
+        owner: root
+        group: root
+
+    - name: Copy openvpn config to connect to Chantal box
+      copy: 
+        src: "{{ oepnvpn_config }}"
+        dest: "{{ oepnvpn_config_dest }}"
+        mode: '0600'
+        owner: root
+        group: root
+
 
     - name: Mount Backup volume
       mount:
         path: /mnt/Backup
-        src: '//mafreebox.freebox.fr/Backup'
+        src: '//192.168.4.1/Backup'
         fstype: cifs
         opts: "credentials={{ credentials_dest }},uid=1000,gid=1000,vers=3.1.1"
         state: present
@@ -74,7 +104,7 @@
     - name: Mount Freebox volume
       mount:
         path: /mnt/Freebox
-        src: '//mafreebox.freebox.fr/Freebox'
+        src: '//192.168.4.1/Freebox'
         fstype: cifs
         opts: "credentials={{ credentials_dest }},uid=1000,gid=1000,vers=3.1.1"
         state: present
@@ -82,7 +112,7 @@
     - name: Mount Master volume
       mount:
         path: /mnt/Master
-        src: '//mafreebox.freebox.fr/Master'
+        src: '//192.168.4.1/Master'
         fstype: cifs
         opts: "credentials={{ credentials_dest }},uid=1000,gid=1000,vers=3.1.1"
         state: present
@@ -90,9 +120,17 @@
     - name: Mount logs volume
       mount:
         path: /mnt/logs
-        src: '//mafreebox.freebox.fr/Master/VMs/data/logs'
+        src: '//192.168.4.1/Master/VMs/data/logs'
         fstype: cifs
         opts: "credentials={{ credentials_dest }},uid=1000,gid=1000,vers=3.1.1"
+        state: present
+
+    - name: Mount Chantal backup volume
+      mount:
+        path: /mnt/chantal
+        src: '//192.168.2.1/Disque dur/Chantal'
+        fstype: cifs
+        opts: "guest,uid=1000,gid=1000,vers=3.1.1"
         state: present
         
     - name: Check if a reboot is needed for Debian box

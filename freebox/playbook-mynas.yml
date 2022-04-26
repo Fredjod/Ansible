@@ -25,6 +25,17 @@
         owner: freebox
         group: freebox
 
+    # Copy bash scripts (utlities)
+    - copy:
+        src: "{{ item }}"
+        dest: "{{ mynas_app_dir }}"
+        owner: freebox
+        group: freebox
+        mode: '0700'
+      with_items:
+        - "mount_chantal_freebox.sh"
+        - "umount_chantal_freebox.sh"
+
     - name: Copy private key
       copy:
         src: "{{ private_key_file }}"
@@ -45,28 +56,28 @@
         group: freebox
         mode: '0600'
 
-    - name: Create MyNAS cron job chrisal-mauguio backup
+    - name: Create MyNAS cron job chrisal-perols backup
       cron:
         state: present
-        name: "chrisal-mauguio backup"
+        name: "chrisal-perols backup"
         minute: "0"
         hour: "1"
-        job: "{{ mynas_app_dir }}/BackupMain.py -v chrisal-mauguio" 
+        job: "{{ mynas_app_dir }}/BackupMain.py -v chrisal-perols" 
 
-    - name: Create MyNAS cron job ornano-mauguio backup
+    - name: Create MyNAS cron job ornano-perols backup
       cron:
         state: present
-        disabled: yes
-        name: "ornano-mauguio backup"
+        disabled: no
+        name: "ornano-perols backup"
         minute: "0"
         hour: "1"
-        job: "{{ mynas_app_dir }}/BackupMain.py -v ornano-mauguio"
+        job: "{{ mynas_app_dir }}/mount_chantal_freebox.sh && {{ mynas_app_dir }}/BackupMain.py -v ornano-perols && {{ mynas_app_dir }}/umount_chantal_freebox.sh"
 
-    - name: Create MyNAS cron job mauguio-chrisal backup
+    - name: Create MyNAS cron job perols-chrisal backup
       cron:
         state: present
-        name: "mauguio-chrisal backup"
+        name: "perols-chrisal backup"
         minute: "0"
         hour: "2"
-        job: "{{ mynas_app_dir }}/BackupMain.py -v mauguio-chrisal" 
+        job: "{{ mynas_app_dir }}/BackupMain.py -v perols-chrisal" 
 ...
