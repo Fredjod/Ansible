@@ -31,6 +31,10 @@
         name: cifs-utils
         state: present
 
+    - name: Install libseccomp2_2.5.4
+      apt:
+        deb="http://ftp.us.debian.org/debian/pool/main/libs/libseccomp/libseccomp2_2.5.4-1_armhf.deb"
+
     # set timezone
 
     - name: Set timezone to Europe/Paris

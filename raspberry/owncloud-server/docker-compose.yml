@@ -1,43 +1,22 @@
-version: '2.1'
+version: "3"
 
 volumes:
-  redis:
+  files:
     driver: local
   mysql:
     driver: local
-
-# The docker logs command will show you the output a container is generating when you don't run it interactively.
-# $ docker logs --tail 50 --follow --timestamps owncloud-server_owncloud_1
-# $ docker-compose exec owncloud ls -al /var/www/owncloud
-# $ docker exec -it owncloud-server_owncloud_1 bash
-
-# Restore database : 
-# docker exec -it owncloud-server_owncloud_1 bash
-#   occ maintenance:mode --on
-#   exit
-# docker exec -it owncloud-server_db_1 bash
-#   cd /var/lib/backup/backup.1/
-#   gunzip  owncloud.sql.gz 
-#   mysql -h localhost -u owncloud -p owncloud < owncloud.sql (password: owncloud)
-#   exit
-# Playbook mba
-# docker exec -it owncloud-server_owncloud_1 bash
-#   occ maintenance:data-fingerprint
-# Playbook mba
-#   occ maintenance:mode --off
-#   exit
-
-# https://github.com/owncloud-docker/base
-
+  redis:
+    driver: local
 
 services:
   owncloud:
     image: owncloud/server:${OWNCLOUD_VERSION}
+    container_name: owncloud_server
     restart: always
     ports:
       - ${HTTP_PORT}:8080
     depends_on:
-      - db
+      - mariadb
       - redis
     environment:
       - OWNCLOUD_DOMAIN=${OWNCLOUD_DOMAIN}
@@ -45,13 +24,12 @@ services:
       - OWNCLOUD_DB_NAME=owncloud
       - OWNCLOUD_DB_USERNAME=owncloud
       - OWNCLOUD_DB_PASSWORD=owncloud
-      - OWNCLOUD_DB_HOST=db
+      - OWNCLOUD_DB_HOST=mariadb
       - OWNCLOUD_ADMIN_USERNAME=${ADMIN_USERNAME}
       - OWNCLOUD_ADMIN_PASSWORD=${ADMIN_PASSWORD}
       - OWNCLOUD_MYSQL_UTF8MB4=true
       - OWNCLOUD_REDIS_ENABLED=true
       - OWNCLOUD_REDIS_HOST=redis
-      - OWNCLOUD_SKIP_CHOWN=true
     healthcheck:
       test: ["CMD", "/usr/bin/healthcheck"]
       interval: 30s
@@ -61,34 +39,36 @@ services:
       - ${OWNCLOUD_DATA_DIR}:/mnt/data
       - ${OWNCLOUD_MBA_DIR}:/mnt/mba
 
-  db:
-    image: webhippie/mariadb:latest
+  mariadb:
+    image: linuxserver/mariadb:arm32v7-10.5.15
+    container_name: owncloud_mariadb
     restart: always
     environment:
-      - MARIADB_ROOT_PASSWORD=owncloud
-      - MARIADB_USERNAME=owncloud
-      - MARIADB_PASSWORD=owncloud
-      - MARIADB_DATABASE=owncloud
+      - MYSQL_ROOT_PASSWORD=owncloud
+      - MYSQL_USER=owncloud
+      - MYSQL_PASSWORD=owncloud
+      - MYSQL_DATABASE=owncloud
       - MARIADB_MAX_ALLOWED_PACKET=128M
       - MARIADB_INNODB_LOG_FILE_SIZE=64M
+      - MARIADB_LOG_BIN=0
     healthcheck:
-      test: ["CMD", "/usr/bin/healthcheck"]
-      interval: 30s
-      timeout: 10s
+      test: ["CMD", "mysqladmin", "ping", "-u", "root", "--password=owncloud"]
+      interval: 10s
+      timeout: 5s
       retries: 5
     volumes:
       - mysql:/var/lib/mysql
       - ${OWNCLOUD_DB_BACKUP_DIR}:/var/lib/backup
 
   redis:
-    image: webhippie/redis:latest
+    image: redis:6
+    container_name: owncloud_redis
     restart: always
-    environment:
-      - REDIS_DATABASES=1
+    command: ["--databases", "1"]
     healthcheck:
-      test: ["CMD", "/usr/bin/healthcheck"]
-      interval: 30s
-      timeout: 10s
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
       retries: 5
     volumes:
-      - redis:/var/lib/redis
+      - redis:/data
