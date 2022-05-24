@@ -7,12 +7,18 @@
     docker_root_dir: ./owncloud-server
     owncloud_data_dir: /mnt/owncloud/data
     mariadb_backup_dir: /mnt/owncloud/db_backup
+    bkscript_dir: /home/pi/owncloud-server
 
   tasks:
     - name: Copy file with owner and permission, using symbolic representation
       copy:
         src: "{{ docker_root_dir }}"
         dest: ./
+
+    - name: +x permissions to backup_mariadb script
+      ansible.builtin.file:
+        path: "{{ bkscript_dir }}/backup_mariadb.sh"
+        mode: '0755'
 
     - name: Create directories for external db_backup volume
       become: true
@@ -41,4 +47,12 @@
       register: output
       args:
         chdir: ./owncloud-server
+
+    - name: Create Owncloud database backup cron job
+      cron:
+        user: pi
+        name: "Owncloud database backup"
+        minute: "30"
+        hour: "00"
+        job: "{{ bkscript_dir }}/backup_mariadb.sh > /tmp/mariadb_backup_output.log 2>&1"
 ...

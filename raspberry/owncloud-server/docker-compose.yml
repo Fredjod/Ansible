@@ -1,5 +1,21 @@
 version: "3"
 
+# logs
+# docker logs --tail 500 --follow --timestamps owncloud_server
+# docker logs --tail 500 --follow --timestamps owncloud_mariadb
+
+# bash
+# docker exec -it owncloud_server bash
+# docker exec -it owncloud_mariadb bash
+
+# Restoring Owncloud database backup
+# docker exec owncloud_server occ maintenance:mode --on
+# docker exec -it owncloud_mariadb bash
+  # $ gunzip /var/lib/backup/owncloud_YYYYMMMDD.sql.gz
+  # $ mysql -h localhost -u owncloud -p owncloud < /var/lib/backup/owncloud_YYYYMMMDD.sql (password: owncloud)
+  # $ exit
+# docker exec owncloud_server occ maintenance:mode --off
+
 volumes:
   files:
     driver: local
