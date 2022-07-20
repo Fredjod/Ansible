@@ -39,7 +39,7 @@
 	Create a restore folder in the Backup volume, and then execute :
 	$ scp -Cpr -i .ssh/pi.xxxxx pi@chrisal.xxxx.xx:/mnt/backup/xxxx.backup/VMs/data/owncloud/data/config /mnt/Backup/restore
 
-Note: in case MacOSX timemachine bundle file becomes too large (due to too old files history), use tmutil command line tool.
+Note: in case MacOSX timemachine bundle becomes too large (due to too old files history), use tmutil command line tool.
 Exemple for removing all 2020 backups:
 	$ tmutil listbackups
 	$ sudo tmutil delete /Volumes/Copies\ de\ sauvegarde\ Time\ Machine/Backups.backupdb/MacBook\ Pro\ de\ Frederic/2020*

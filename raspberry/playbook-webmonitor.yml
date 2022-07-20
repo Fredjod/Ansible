@@ -1,0 +1,50 @@
+- name: Install / update MBA app
+  hosts: raspberry
+  remote_user: pi
+
+  vars:
+    jar_file: /Users/frederic/git/WebMonitor/pom.xml/target/web-monitor-0.0.1-jar-with-dependencies.jar
+    docker_file: /Users/frederic/git/WebMonitor/pom.xml/Dockerfile
+    app_dir: /home/pi/WebMonitor
+    install_auth: /Volumes/Vault2/webmonitor/auth.properties
+
+  tasks:
+
+    - name: Create app directory 
+      file:
+        path: "{{ app_dir }}"
+        state: directory
+
+    - name: Create conf directory 
+      file:
+        path: "{{ app_dir }}/conf"
+        state: directory
+
+    - name: Copy jar file
+      copy: 
+        src: "{{ jar_file }}"
+        dest: "{{ app_dir }}"
+
+    - name: Copy Docker file
+      copy: 
+        src: "{{ docker_file }}"
+        dest: "{{ app_dir }}"
+
+    - name: Build the webmonitor image
+      command: "docker build -t webmonitor:latest {{ app_dir }}"
+      register: output
+
+    - name: Copy auth.properties file from the Vault
+      copy: 
+        src: "{{ install_auth }}"
+        dest: "{{ app_dir }}/conf"
+        mode: '0600'
+
+    - name: Create WebMonitor cron job
+      cron:
+        user: pi
+        name: "WebMonitor"
+        hour: "0,6,12,18"
+        minute: "0"
+        job: "docker run --rm --name webmon -v {{ app_dir }}/conf:/usr/webmon/conf webmonitor:latest >> /tmp/webmon_output.log 2>&1"
+...
