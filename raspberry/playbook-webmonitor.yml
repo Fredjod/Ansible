@@ -3,7 +3,7 @@
   remote_user: pi
 
   vars:
-    jar_file: /Users/frederic/git/WebMonitor/pom.xml/target/web-monitor-0.0.1-jar-with-dependencies.jar
+    jar_file: /Users/frederic/git/WebMonitor/pom.xml/target/web-monitor-0.0.2-jar-with-dependencies.jar
     docker_file: /Users/frederic/git/WebMonitor/pom.xml/Dockerfile
     app_dir: /home/pi/WebMonitor
     install_auth: /Volumes/Vault2/webmonitor/auth.properties
@@ -45,6 +45,6 @@
         user: pi
         name: "WebMonitor"
         hour: "0,6,12,18"
-        minute: "0"
-        job: "docker run --rm --name webmon -v {{ app_dir }}/conf:/usr/webmon/conf webmonitor:latest >> /tmp/webmon_output.log 2>&1"
+        minute: "1"
+        job: "docker run --rm --name webmon -v {{ app_dir }}/conf:/usr/webmon/conf -v /mnt/logs:/usr/webmon/logs webmonitor:latest >> /tmp/webmon_output.log 2>&1"
 ...
