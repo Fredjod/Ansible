@@ -3,7 +3,7 @@
   remote_user: pi
 
   vars:
-    jar_file: /Users/frederic/git/WebMonitor/pom.xml/target/web-monitor-0.0.2-jar-with-dependencies.jar
+    jar_file: /Users/frederic/git/WebMonitor/pom.xml/target/web-monitor-0.0.3-jar-with-dependencies.jar
     docker_file: /Users/frederic/git/WebMonitor/pom.xml/Dockerfile
     app_dir: /home/pi/WebMonitor
     install_auth: /Volumes/Vault2/webmonitor/auth.properties
@@ -14,6 +14,11 @@
       file:
         path: "{{ app_dir }}"
         state: directory
+
+    - name: Delete content & directory of app dir
+      file:
+        state: absent
+        path: "{{ app_dir }}"
 
     - name: Create conf directory 
       file:

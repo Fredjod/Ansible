@@ -7,6 +7,7 @@
     docker_root_dir: ./owncloud-server
     owncloud_data_dir: /mnt/owncloud/data
     mariadb_backup_dir: /mnt/owncloud/db_backup
+    owncloud_files_bck_dir: /mnt/owncloud/files_backup
     bkscript_dir: /home/pi/owncloud-server
 
   tasks:
@@ -20,10 +21,23 @@
         path: "{{ bkscript_dir }}/backup_mariadb.sh"
         mode: '0755'
 
+    - name: +x permissions to backup_mariadb script
+      ansible.builtin.file:
+        path: "{{ bkscript_dir }}/backup_jaudin_files.sh"
+        mode: '0755'
+
     - name: Create directories for external db_backup volume
       become: true
       file:
         path: "{{mariadb_backup_dir}}"
+        state: directory
+        owner: www-data
+        group: www-data
+
+    - name: Create directories for external files backup 
+      become: true
+      file:
+        path: "{{owncloud_files_bck_dir}}"
         state: directory
         owner: www-data
         group: www-data
@@ -55,4 +69,12 @@
         minute: "30"
         hour: "00"
         job: "{{ bkscript_dir }}/backup_mariadb.sh > /tmp/mariadb_backup_output.log 2>&1"
+
+    - name: Create Owncloud Jaudin's files backup cron job
+      cron:
+        user: pi
+        name: "Owncloud Jaudin Files backup"
+        minute: "00"
+        hour: "01"
+        job: "sudo -u www-data {{ bkscript_dir }}/backup_jaudin_files.sh > /tmp/backup_jaudin_files.log 2>&1"
 ...
