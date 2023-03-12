@@ -31,9 +31,9 @@
         name: cifs-utils
         state: present
 
-    - name: Install libseccomp2_2.5.4
+    - name: Install libseccomp2_2.5.4, needed by Owncloud server 10.9
       apt:
-        deb="http://ftp.us.debian.org/debian/pool/main/libs/libseccomp/libseccomp2_2.5.4-1_armhf.deb"
+        deb="http://ftp.us.debian.org/debian/pool/main/libs/libseccomp/libseccomp2_2.5.4-1+b3_armhf.deb"
 
     # set timezone
 
