@@ -6,7 +6,7 @@
   become: yes
   
   vars:
-    win_credentials: /Volumes/Vault2/cifs/win-credentials
+    win_credentials: /Volumes/Vault3/cifs/win-credentials
     credentials_dest: /root/.win-credentials
 
   tasks:
@@ -46,7 +46,7 @@
     - name: Update authorized public key 
       authorized_key: 
         user: pi 
-        key: "{{ lookup('file', '/Volumes/Vault2/ssh-keys/pi.password/pi.raspberrypi.pub') }}" 
+        key: "{{ lookup('file', '/Volumes/Vault3/ssh-keys/pi.password/pi.raspberrypi.pub') }}" 
         state: present
 
     - name: Swith PasswordAuthentication to 'no' in sshd_config

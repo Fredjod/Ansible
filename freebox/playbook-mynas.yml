@@ -6,10 +6,10 @@
 
   vars:
     project_root_dir: /Users/frederic/git/MyNAS/
-    private_key_file: /Volumes/Vault2/ssh-keys/pi.wo.password/pi.raspberry
+    private_key_file: /Volumes/Vault3/ssh-keys/pi.wo.password/pi.raspberry
     mynas_app_dir: /home/freebox/MyNas
     install_archive: MyNAS_0.5.tar.gz
-    backup_plan_file: /Volumes/Vault2/mynas/backup_volume_path.py
+    backup_plan_file: /Volumes/Vault3/mynas/backup_volume_path.py
 
   tasks:
 

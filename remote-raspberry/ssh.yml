@@ -12,7 +12,7 @@
     - name: Update authorized public key 
       authorized_key: 
         user: pi 
-        key: "{{ lookup('file', '/Volumes/Vault2/ssh-keys/pi.wo.password/pi.raspberry.pub') }}" 
+        key: "{{ lookup('file', '/Volumes/Vault3/ssh-keys/pi.wo.password/pi.raspberry.pub') }}" 
         state: present
 
     - name: Swith PasswordAuthentication to 'no' in sshd_config

@@ -7,7 +7,7 @@
   vars:
     project_root_dir: /Users/frederic/git/LogChecker
     logchecker_app_dir: /home/freebox/LogChecker
-    log_checker_param: /Volumes/Vault2/logchecker/parameters.py
+    log_checker_param: /Volumes/Vault3/logchecker/parameters.py
 
   tasks:
 

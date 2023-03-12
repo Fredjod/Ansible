@@ -7,7 +7,7 @@
   vars:
     docker_root_dir: ./nginx
     nginx_etc: /home/pi/nginx/etc
-    secure_storage: /Volumes/Vault2/nginx
+    secure_storage: /Volumes/Vault3/nginx
     max_body_size: 500M # Set the maximum file size allowed for uploading.
 
   tasks:

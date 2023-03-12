@@ -23,7 +23,7 @@
 
 3) Update the hosts file with the VM's IP
 
-4) Mount Vault2 volume
+4) Mount Vault3 volume
 
 5) Run the Ansible scripts
 

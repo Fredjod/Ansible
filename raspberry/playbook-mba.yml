@@ -10,9 +10,9 @@
     install_archive: mba_4.23.tar.gz
     mba_app_dir: /home/pi/mba_app
     owncloud_data_dir: /mnt/owncloud/data
-    install_properties: /Volumes/Vault2/mba/app.txt
-    install_auth: /Volumes/Vault2/mba/auth.pl
-    install_correlation: /Volumes/Vault2/mba/correlation.txt
+    install_properties: /Volumes/Vault3/mba/app.txt
+    install_auth: /Volumes/Vault3/mba/auth.pl
+    install_correlation: /Volumes/Vault3/mba/correlation.txt
     web_report_project: /Users/frederic/git/My-Banking-Agent//web-report/public-html/mba-report/
     web_report_prod: /mnt/mba/web-report/
 

@@ -6,11 +6,11 @@
   become: yes
  
   vars:
-    win_credentials: /Volumes/Vault2/cifs/win-credentials
+    win_credentials: /Volumes/Vault3/cifs/win-credentials
     credentials_dest: /root/.win-credentials
-    vpn_chantal_credentials: /Volumes/Vault2/cifs/vpn_chantat_credentials
+    vpn_chantal_credentials: /Volumes/Vault3/cifs/vpn_chantat_credentials
     vpn_chantal_credentials_dest: /root/.vpn_chantat_credentials
-    oepnvpn_config: /Volumes/Vault2/openvpn/config_openvpn_routed_orn79vpn_tcp.ovpn
+    oepnvpn_config: /Volumes/Vault3/openvpn/config_openvpn_routed_orn79vpn_tcp.ovpn
     oepnvpn_config_dest: /etc/openvpn/client/config_openvpn_routed_orn79vpn.ovpn
 
   tasks:
@@ -30,7 +30,7 @@
     - name: Update authorized public key 
       authorized_key: 
         user: freebox 
-        key: "{{ lookup('file', '/Volumes/Vault2/ssh-keys/pi.password/pi.raspberrypi.pub') }}" 
+        key: "{{ lookup('file', '/Volumes/Vault3/ssh-keys/pi.password/pi.raspberrypi.pub') }}" 
         state: present
 
     - name: Swith PasswordAuthentication to 'no' in sshd_config
