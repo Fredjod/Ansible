@@ -54,6 +54,7 @@ services:
     volumes:
       - ${OWNCLOUD_DATA_DIR}:/mnt/data
       - ${OWNCLOUD_MBA_DIR}:/mnt/mba
+      - ${OWNCLOUD_SHARE_DIR}:/mnt/share      
 
   mariadb:
     image: linuxserver/mariadb:arm32v7-10.5.15

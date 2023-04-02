@@ -100,8 +100,7 @@
         src: '//mafreebox.freebox.fr/Master/share'
         fstype: cifs
         opts: "credentials={{ credentials_dest }},uid=33,gid=33"
-        state: absent
-
+        state: present
 
     - name: Mount mba volume
       mount:
@@ -110,6 +109,7 @@
         fstype: cifs
         opts: "credentials={{ credentials_dest }},uid=33,gid=33"
         state: present
+
 
     - name: Mount logs volume
       mount:

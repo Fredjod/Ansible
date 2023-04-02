@@ -18,8 +18,8 @@
 2) Install Ansible on the control node (most likely your desktop):
 
 	$ curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
-	$ python get-pip.py --user
-	$ pip install --user ansible
+	$ python3 get-pip.py --user
+	$ pip3 install --user ansible
 	$ /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 	$ brew install https://raw.githubusercontent.com/kadwanev/bigboybrew/master/Library/Formula/sshpass.rb
 
