@@ -7,7 +7,7 @@
 
   vars:
     project_root_dir: /Users/frederic/git/My-Banking-Agent/mba_app
-    install_archive: mba_4.23.tar.gz
+    install_archive: mba_5.1.tar.gz
     mba_app_dir: /home/pi/mba_app
     owncloud_data_dir: /mnt/owncloud/data
     install_properties: /Volumes/Vault3/mba/app.txt
@@ -97,12 +97,24 @@
           dest: "{{ web_report_prod }}"
           rsync_opts:
             - "--exclude=*.json"
-
-    - name: Create MBA cron job
-      cron:
-        user: pi
-        name: "MBA"
-        minute: "30"
-        hour: "20"
-        job: "{{ mba_app_dir }}/run_mba.sh > /tmp/mba_output.log 2>&1"
+ 
+    - name: Tear down existing MBA Web service
+      command: docker-compose -p mba-web-service stop
+      register: output
+      args:
+        chdir: "{{ mba_app_dir }}/prod"
+        
+    - name: Create and start MBA Web service
+      command: docker-compose -p mba-web-service up -d
+      register: output
+      args:
+        chdir: "{{ mba_app_dir }}/prod"
+        
+ #   - name: Create MBA cron job
+ #     cron:
+ #       user: pi
+ #       name: "MBA"
+ #       minute: "30"
+ #       hour: "20"
+ #       job: "{{ mba_app_dir }}/run_mba.sh > /tmp/mba_output.log 2>&1"
 ...

@@ -1,9 +1,11 @@
-- name: Install / update MBA app
+- name: Install / update Webmonitor app
   hosts: raspberry
   remote_user: pi
 
   vars:
-    jar_file: /Users/frederic/git/WebMonitor/pom.xml/target/web-monitor-0.0.4 -jar-with-dependencies.jar
+    jar_file: /Users/frederic/git/WebMonitor/pom.xml/target/web-monitor-0.0.4-jar-with-dependencies.jar
+    springboot_launcher: /Users/frederic/git/WebMonitor/pom.xml/mvnw
+    springboot_launcher_lib: /Users/frederic/git/WebMonitor/pom.xml/.mvn
     docker_file: /Users/frederic/git/WebMonitor/pom.xml/Dockerfile
     app_dir: /home/pi/WebMonitor
     install_auth: /Volumes/Vault3/webmonitor/auth.properties
@@ -24,16 +26,29 @@
       file:
         path: "{{ app_dir }}/conf"
         state: directory
+        
+    - name: Copy springboot launcher librairy
+      synchronize:
+          src: "{{ springboot_launcher_lib }}"
+          dest: "{{ app_dir }}"
+          
+    - name: Copy Springboot launcher file
+      copy: 
+        src: "{{ springboot_launcher }}"
+        dest: "{{ app_dir }}"
+        mode: '0755'
 
     - name: Copy jar file
       copy: 
         src: "{{ jar_file }}"
         dest: "{{ app_dir }}"
+        
 
     - name: Copy Docker file
       copy: 
         src: "{{ docker_file }}"
         dest: "{{ app_dir }}"
+        
 
     - name: Build the webmonitor image
       command: "docker build -t webmonitor:latest {{ app_dir }}"

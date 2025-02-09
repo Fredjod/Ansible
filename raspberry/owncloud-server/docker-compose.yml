@@ -74,7 +74,7 @@ services:
       timeout: 5s
       retries: 5
     volumes:
-      - mysql:/var/lib/mysql
+      - ${OWNCLOUD_DB_DIR}:/var/lib/mysql
       - ${OWNCLOUD_DB_BACKUP_DIR}:/var/lib/backup
 
   redis:
